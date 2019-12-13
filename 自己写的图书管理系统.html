@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style type="text/css">
+    .grid {
+      margin: auto;
+      width: 530px;
+      text-align: center;
+    }
+    .grid table {
+      border-top: 1px solid #C2D89A;
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .grid th,td {
+      padding: 10;
+      border: 1px dashed #F3DCAB;
+      height: 35px;
+      line-height: 35px;
+    }
+    .grid th {
+      background-color: #F3DCAB;
+    }
+    .grid .book {
+      padding-bottom: 10px;
+      padding-top: 5px;
+      background-color: #F3DCAB;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="grid">
+      <div>
+        <h1>艺哥图书管理</h1>
+        <div class="book">
+          <div>
+            <label for="id" >
+              编号：
+            </label>
+            <input type="text" id="id" v-model='id'  :disabled="flag">
+            <label for="name">
+              名称：
+            </label>
+            <input type="text" id="name" v-model='name'>
+            <button @click='handle(id)'  :disabled="submitFlag">提交</button>
+          </div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>编号</th>
+            <th>名称</th>
+            <th>时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :key='item.id' v-for='item in books'>
+            <td> {{item.id}}</td>
+            <td>{{item.name}}</td>
+            <td>{{item.date}}</td>
+
+            <div>
+                <span>图书总数：</span>
+                
+
+                <span>   {{total}} </span>
+              </div>
+            <td>
+                <a href="" @click.prevent='toEdit(item.id)'>修改</a>
+                <span>|</span>
+                <a href="" @click.prevent='deleteB(item.id)'>删除</a>
+
+         
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script type="text/javascript" src="js/vue.js"></script>
+  <script type="text/javascript">
+    /*
+      图书管理-添加图书
+    */
+    var vm = new Vue({
+      el: '#app',
+      data: {
+        id: '',
+        name: '',
+        submitFlag:false,
+        flag:false,
+        books: [{
+          id: 1,
+          name: '三国演义',
+          date: ''
+        },{
+          id: 2,
+          name: '水浒传',
+          date: ''
+        },{
+          id: 3,
+          name: '红楼梦',
+          date: ''
+        },{
+          id: 4,
+          name: '西游记',
+          date: ''
+        }]
+      },
+      methods: {
+        handle: function(){
+
+    
+        
+    
+        // 判断如果是添加操作 还是修改操作撒
+        if(this.flag){
+         
+    this.books.some((item) => {
+              if(this.id == item.id) {
+                item.name = this.name;
+                // 完成更新操作之后，需要终止循环
+                return true;
+              }
+            }); 
+          this.flag=false;
+        }else{
+         //添加图书
+          var obj = { };
+          obj.name= this.name;
+          obj.id=this.id;
+           this.books.push(obj);
+          this.name="";
+          this.id="";
+        }
+        this.name="";
+        this.id="";
+      },
+
+     
+      toEdit: function(id){
+
+         this.flag=true;
+        var book = this.books.filter(function(item){
+            return item.id == id;
+
+        });
+    
+       
+          this.id = book[0].id;
+        this.name=book[0].name;
+    
+      },
+
+      deleteB: function(id) {
+           
+            this.books = this.books.filter(function(item) {
+              return item.id != id;
+            });
+          }
+        },
+
+        computed: {
+          total: function() {
+            // 计算图书的总数
+            return this.books.length;
+          }
+        },
+        watch:{
+          name:function(val){
+            var flag2 = this.books.some(function(item){
+              return item.name==val;
+            })
+            if (flag2){
+              this.submitFlag=true;
+            }else{
+              this.submitFlag=false;
+            }
+             
+          }
+        },
+        created: function() {
+          // 该生命周期钩子函数被触发的时候，模板已经可以使用
+          // 一般此时用于获取后台数据，然后把数据填充到模板
+          var data = [
+            {
+              id: 1,
+              name: "三国演义1",
+              date: 2525609975000
+            },
+            {
+              id: 2,
+              name: "水浒传",
+              date: 2525609975000
+            },
+            {
+              id: 3,
+              name: "红楼梦",
+              date: 2525609975000
+            },
+            {
+              id: 4,
+              name: "西游记",
+              date: 2525609975000
+            }
+          ];
+          this.books = data;
+        }
+      });
+
+
+  
+    
+
+
+  
+  </script>
+</body>
+</html>
